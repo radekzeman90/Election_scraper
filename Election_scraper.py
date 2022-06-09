@@ -71,5 +71,24 @@ def create_csv(adress, file_name):
 
 # If launched from command prompt, first argument is county's webpage adress
 # and second argument is output file's name.
+
+if len(sys.argv) != 3:
+    print('Wrong number of input arguments.')
+    quit()
+else:
+    pass
+
+if not 'volby.cz/pls/ps2017nss' in str((sys.argv[1])):
+    print('Incorrect adress, please enter the right one.')
+    quit()
+else:
+    pass
+
+if 'volby.cz/pls/ps2017nss' in str((sys.argv[2])):
+    print('You have confused adress and file name arguments')
+    quit()
+else:
+    pass
+
 if __name__ == '__main__':
     create_csv(sys.argv[1], sys.argv[2])
