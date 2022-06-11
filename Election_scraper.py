@@ -38,8 +38,8 @@ def election_scraper(adress):
     voters_in_list = soup.find('td', {'class':'cislo', 'headers':'sa2'}).text
     issued_envelopes = soup.find('td', {'class':'cislo', 'headers':'sa3'}).text
     valid_votes = soup.find('td', {'class':'cislo', 'headers':'sa6'}).text
-    party_scrape1 = soup.find_all('td',  {'class':'overflow_name', 'headers':'t1sa1 t1sb2'})
-    party_scrape2 = soup.find_all('td',  {'class':'overflow_name', 'headers':'t2sa1 t2sb2'})
+    party_scrape1 = soup.find_all('td',  {'class':'cislo', 'headers':'t1sa2 t1sb3'})
+    party_scrape2 = soup.find_all('td',  {'class':'cislo', 'headers':'t2sa2 t2sb3'})
     start, end = 'obec=', '&xvyber'
     city_number = adress.split(start)[1].split(end)[0]
     for word in party_scrape1:
@@ -50,7 +50,24 @@ def election_scraper(adress):
     for word in h3:
         if 'Obec:' in word.string:
             city_name = word.text.replace('Obec: ', '').replace('\n', '')
-    return city_name, city_number, voters_in_list, issued_envelopes, valid_votes, parties
+    return ([city_name, city_number, voters_in_list, issued_envelopes, valid_votes] + parties)
+
+def header(adress):
+    """
+    Tato funkce vytvoří hlavičku do výstupní .csv tabulky.
+    This function creates header into output .csv table.
+    """
+    first_city = city_adress_list(adress)[0]
+    header = ['city name', 'city number', 'voters in list', 'issued envelopes', 'valid votes']
+    getr = requests.get(first_city)
+    soup = bs4.BeautifulSoup(getr.text, "html.parser")
+    parties_scrape1 = soup.find_all('td', {'class': 'overflow_name', 'headers': 't1sa1 t1sb2'})
+    parties_scrape2 = soup.find_all('td', {'class': 'overflow_name', 'headers': 't2sa1 t2sb2'})
+    for word in parties_scrape1:
+        header.append(word.text)
+    for word in parties_scrape2:
+        header.append(word.text)
+    return header
 
 def create_csv(adress, file_name):
     """
@@ -63,7 +80,7 @@ def create_csv(adress, file_name):
     list_of_adresses = city_adress_list(adress)
     new_csv = open(f"{file_name}.csv", mode = "w", newline = "")
     writer = csv.writer(new_csv)
-    writer.writerow(('city name', 'city number', 'voters in list', 'issued envelopes', 'valid votes', 'candidating parties'))
+    writer.writerow(header(adress))
     for adress in list_of_adresses:
         result = election_scraper(adress)
         writer.writerow(result)
