@@ -1,5 +1,5 @@
 """
-projekt_3.py: třetí projekt do Engeto Online Python Akademie
+projekt_3.py: third project of Engeto Online Python Academy course
 author: Radek Zeman
 email: ze.ra@seznam.cz
 discord: Radek Zeman
